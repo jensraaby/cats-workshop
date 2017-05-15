@@ -1,4 +1,4 @@
-import cats.{Apply, Cartesian, Functor}
+import cats.{Apply, Functor}
 import cats.instances.option._
 import cats.workshop.Maybe
 import cats.workshop.Maybe.{Just, NotThere}
