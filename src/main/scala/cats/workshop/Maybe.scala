@@ -17,6 +17,8 @@ sealed trait Maybe[+A] {
 }
 
 object Maybe {
+  def apply[A](value: A): Maybe[A] = Just(value)
+  def empty[A]: Maybe[A] = NotThere
 
   case class Just[A](get: A) extends Maybe[A]
 
