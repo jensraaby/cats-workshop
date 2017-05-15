@@ -27,6 +27,31 @@ optionApply.ap(Some(stringLength))(Some("hello"))
 
 
 
+
+/*
+  Why do we need 'ap'?
+
+  Imagine we have 2 values wrapped in an effect F (e.g. Option), and want to apply a function to them.
+
+ */
+val maybeInt = Some(5)
+val maybeString = Some("string")
+
+val combiningFunction = (a: Int, b: String) => a + b.length
+
+// we cannot simply combine maybeInt and maybeString with map:
+val partiallyApplied = maybeInt.map(int => (string: String) => combiningFunction(int, string))
+
+// But now we have a function wrapped in an Option! We need to be able to apply it to maybeString.
+// we can do this with the Apply instance for Option:
+
+Apply[Option].ap(partiallyApplied)(Some("string"))
+
+
+
+
+
+
 /*
     Have a go at implementing Apply for Maybe.
 
@@ -39,10 +64,10 @@ implicit object MaybeApply extends Apply[Maybe] {
   override def map[A, B](fa: Maybe[A])(f: (A) => B): Maybe[B] = ???
 }
 
+
 // Try out the ap function:
 Apply[Maybe].ap(Just(stringLength))(Just("a string"))
 Apply[Maybe].ap(Just(stringLength))(NotThere)
-
 
 
 
@@ -62,33 +87,19 @@ optionApply.map2(Some("a"), Some("b"))(combineStringLengths)
 optionApply.tuple2(Some(2), Some("and"))
 
 
-/*
-  These functions are what enables the |@| syntax (with up to 22 items).
+// With these, we can combine any number of effectful values and apply them to a given function
+val username = Some("user")
+val password = Some("password")
+val hostname = Some("www.secretlogin.com")
 
- To get the Macaulay Culkin operator, we need to import the Cartesian syntax.
-*/
-import cats.syntax.cartesian._
-
-// An example with a list:
-import cats.instances.list._
-val scream = List(2,3) |@| List(4,5) |@| List("string", "two")
-
-// The |@| function creates a CartesianBuilder
-// Each time we call a CartesianBuilder with |@|, we get the next CartesianBuilder.
-// Again, they increase in number as you add arguments.
-// CartesianBuilder1, CartesianBuilder2, CartesianBuilder3.... CartesianBuilder22
-
-// to combine the values and get them out of the cartesian builder, you can use tupled:
-scream.tupled
-// what does this give you?
+// the world's worst login method, which doesn't know about Option
+def login(user: String, password: String, host: String): Boolean = (user, password, host) match {
+  case ("admin", "password", _) => true
+  case ("demo", "demo", _) => true
+  case _ => false
+}
 
 
-// we could also map over the result with a function:
-scream.map((num1, num2, string) => num1 + num2 + string.length)
+// now we can combine all our options and pass them through to the login function
+Apply[Option].map3(username, password, hostname)(login)
 
-// Try using |@| with Maybe:
-val maybeScream = Maybe(2) |@| Maybe(4)
-maybeScream.tupled
-
-val anotherMaybeScream = Maybe.empty[String] |@| Maybe("string")
-anotherMaybeScream.tupled

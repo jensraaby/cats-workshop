@@ -6,7 +6,7 @@ import cats.instances.option._
 
 /*
    Applicative is an extension of Apply, but it adds the "pure" function.
-   This means to
+
  */
 
 implicit object MaybeApplicative extends Applicative[Maybe] {
@@ -17,7 +17,7 @@ implicit object MaybeApplicative extends Applicative[Maybe] {
   // it applies to the function to the value.
   override def ap[A, B](ff: Maybe[(A) => B])(fa: Maybe[A]): Maybe[B] = ???
 
-  //  Note that 'map' can be defined in terms of 'pure' and 'ap':
+  //  Note that 'map' is defined in terms of 'pure' and 'ap':
   //
   // override def map[A, B](fa: F[A])(f: A => B): F[B] =
   //  ap(pure(f))(fa)
@@ -25,14 +25,14 @@ implicit object MaybeApplicative extends Applicative[Maybe] {
 
 
 val stringLength = (s: String) => s.length
-val appStringLength = Applicative[Maybe].pure(stringLength)
 
 
 // Try out your implementation:
-Applicative[Maybe].pure(12345)
-Applicative[Maybe].ap(appStringLength)(Just("this is a string!"))
-Applicative[Maybe].ap(appStringLength)(Maybe.empty[String])
-Applicative[Maybe].ap(Maybe.empty[String => Int])(Just("this is a string!"))
+//val appStringLength = Applicative[Maybe].pure(stringLength)
+//Applicative[Maybe].pure(12345)
+//Applicative[Maybe].ap(appStringLength)(Just("this is a string!"))
+//Applicative[Maybe].ap(appStringLength)(Maybe.empty[String])
+//Applicative[Maybe].ap(Maybe.empty[String => Int])(Just("this is a string!"))
 
 
 
@@ -44,3 +44,16 @@ val listAndOption = Applicative[List] compose Applicative[Option]
 listAndOption.pure(1)
 
 listAndOption.ap(listAndOption.pure(stringLength))(List(Some("string"), Some("other string")))
+
+
+/*
+
+  Applicatives define a product function, which is similar to the Cartesian builder for creating a tupled value
+
+*/
+
+
+Applicative[Option].product(Some(2), Some("thing"))
+
+
+
