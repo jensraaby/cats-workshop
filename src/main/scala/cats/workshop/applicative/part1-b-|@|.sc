@@ -1,7 +1,7 @@
 /*
   The functions in Apply are what enables the |@| syntax (with up to 22 items).
 
- To get the Macaulay Culkin operator, we need to import the Cartesian syntax.
+ To get the Macaulay Culkin operator on an arbitrary Functor, we need to import the Cartesian syntax.
 */
 import cats.syntax.cartesian._
 import cats.instances.option._
@@ -19,6 +19,10 @@ val scream = List(2,3) |@| List(4,5) |@| List("string", "two")
 // To combine the values and get them out of the cartesian builder, you can use tupled:
 scream.tupled
 // what does this give you?
+
+
+
+
 
 
 // we could also map over the result with a function:
@@ -41,12 +45,12 @@ val password = Some("password")
 val hostname = Option("www.secretlogin.com") // this is the other way to get the type to be Option[String]
 
 // the world's worst login method, which doesn't know about Option
-def login(user: String, password: String, host: String): Boolean = (user, password, host) match {
-  case ("admin", "password", _) => true
-  case ("demo", "demo", _) => true
+def login(user: String, password: String): Boolean = (user, password) match {
+  case ("admin", "password") => true
+  case ("demo", "demo") => true
   case _ => false
 }
 
 // This looks nicer than the map3 syntax (and it scales nicely as you add arguments to the login method)
-(username |@| password |@| hostname) map login
-(Option("admin") |@| Option("password") |@| Option("secretsite.com")) map login
+(username |@| password) map login
+(Option("admin") |@| Option("password")) map login
