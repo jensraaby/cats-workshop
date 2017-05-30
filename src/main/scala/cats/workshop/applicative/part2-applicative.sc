@@ -4,6 +4,11 @@ import cats.workshop.Maybe.{Just, NotThere}
 import cats.instances.list._
 import cats.instances.option._
 
+import scala.concurrent.{Await, Future}
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.duration.Duration
+import scala.util.{Failure, Success, Try}
+
 /*
    Applicative is an extension of Apply, but it adds the "pure" function.
 
@@ -56,4 +61,24 @@ listAndOption.ap(listAndOption.pure(stringLength))(List(Some("string"), Some("ot
 Applicative[Option].product(Some(2), Some("thing"))
 
 
+/*
+
+  One of the most useful methods that come with Applicatives is 'sequence':
+
+
+ */
+
+import cats.instances.try_._
+import cats.instances.future._
+Applicative[Option].sequence(List(Option(2), Option(3)))
+
+// This is particularly useful for error handling
+Applicative[Try].sequence(List(Success(2), Failure(new RuntimeException("it went wrong"))))
+Applicative[Try].sequence(List(Try(2), Try(4)))
+
+// Try changing the above list of Try values to Success values and see what happens
+
+// this is something we use quite a lot with futures
+val sequencedFutures = Applicative[Future].sequence(List(Future(1), Future(2)))
+Await.result(sequencedFutures, Duration("2s"))
 
