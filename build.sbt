@@ -9,7 +9,7 @@ lazy val root = (project in file(".")).
     )),
     name := "cats-workshop",
     libraryDependencies += scalaTest % Test,
-    libraryDependencies ++= Seq(cats, finagle, catbird),
+    libraryDependencies ++= Seq(cats, finagle, catbird) ++ circe,
     initialCommands in console :=
       """
         |import cats._
