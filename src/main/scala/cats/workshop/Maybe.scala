@@ -5,13 +5,13 @@ import cats.workshop.Maybe.{Just, NotThere}
 /**
   * This is a bit like Scala's Option, but has different names and not all of the methods you normally have
   *
-  * @tparam A
+  * @tparam A the type of value inside the Maybe
   */
 sealed trait Maybe[+A] {
   def get: A
 
   def fold[B](z: B)(f: A => B): B = this match {
-    case Just(a) => f(a)
+    case Just(a)  => f(a)
     case NotThere => z
   }
 }

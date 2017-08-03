@@ -7,7 +7,7 @@ import cats.workshop.Maybe.{Just, NotThere}
 object MaybeInstances {
   implicit val maybeFunctor: Functor[Maybe] = new Functor[Maybe] {
     override def map[A, B](fa: Maybe[A])(f: (A) => B): Maybe[B] = fa match {
-      case Just(a) => Just(f(a))
+      case Just(a)  => Just(f(a))
       case NotThere => NotThere
     }
   }
