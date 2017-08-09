@@ -13,14 +13,21 @@ object MaybeInstances {
   }
 
   implicit val maybeApply: Apply[Maybe] = new Apply[Maybe] {
-    override def ap[A, B](ff: Maybe[(A) => B])(fa: Maybe[A]): Maybe[B] = ???
+    override def ap[A, B](ff: Maybe[(A) => B])(fa: Maybe[A]): Maybe[B] = (ff, fa) match {
+      case (Just(f), Just(a)) => Just(f(a))
+      case _                  => NotThere
+    }
 
-    override def map[A, B](fa: Maybe[A])(f: (A) => B): Maybe[B] = ???
+    override def map[A, B](fa: Maybe[A])(f: (A) => B): Maybe[B] =
+      fa.fold(Maybe.empty[B])(a => Just(f(a)))
   }
 
   implicit val maybeApplicative: Applicative[Maybe] = new Applicative[Maybe] {
-    override def pure[A](x: A): Maybe[A] = ???
+    override def pure[A](a: A): Maybe[A] = Just(a)
 
-    override def ap[A, B](ff: Maybe[(A) => B])(fa: Maybe[A]): Maybe[B] = ???
+    override def ap[A, B](ff: Maybe[(A) => B])(fa: Maybe[A]): Maybe[B] = (ff, fa) match {
+      case (Just(f), Just(a)) => pure(f(a))
+      case _                  => NotThere
+    }
   }
 }

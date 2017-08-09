@@ -24,7 +24,6 @@ scream.tupled
 
 
 
-
 // we could also map over the result with a function:
 scream.map((num1, num2, string) => num1 + num2 + string.length)
 

@@ -25,7 +25,7 @@ val applicativeSequenceWithOptions = app.sequence(futuresWithOptions)
 // You also get traverse, which is like doing a flatMap on all the Futures at once!
 val simpleTraverse = app.traverse(futures)(_.transform {
   case Return(a) => Future(a)
-  case Throw(err) => Future("this is a backup")
+  case Throw(_) => Future("this is a backup")
 })
 val failureTraverse = app.traverse(futuresWithFailures)(a => Future.value(a.toString))
 Await.result(simpleTraverse)
