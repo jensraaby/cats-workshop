@@ -6,14 +6,36 @@ val listOfMaybe: List[Maybe[String]] = List(Just("there"), Just("that"), Just("l
 
 // implement sequence, and try it out with the above list
 def sequence(listOfMaybeString: List[Maybe[String]]): Maybe[List[String]] =
-  listOfMaybeString.foldLeft(Maybe(List.empty[String])) {
-    case (Just(acc), Just(cur)) => Just(acc :+ cur)
+  listOfMaybeString.foldRight(Maybe(List.empty[String])) {
+    case (Just(list), Just(cur)) => Just(cur :: list)
     case _ => NotThere
   }
 
 // try it out:
 sequence(listOfMaybe)
 
+// First stab during the workshop
+def sequence2(listOfMaybeString: List[Maybe[String]]): Maybe[List[String]] =
+  listOfMaybeString match {
+    case Nil => Just(List.empty[String])
+    case NotThere :: _ => NotThere
+    case Just(head) :: tail => {
+      val mrTail = sequence(tail)
+      mrTail match {
+        case Just(missTail) => Just(head :: missTail)
+        case _ => NotThere
+      }
+    }
+  }
+
+
+sequence(Nil)
+sequence(listOfMaybe)
+sequence(List(Just("cat"), NotThere, Just("Maybe")))
+
+sequence2(Nil)
+sequence2(listOfMaybe)
+sequence2(List(Just("cat"), NotThere, Just("Maybe")))
 
 // now try using the sequence method (which comes from the cats Traverse syntax) on the list of Maybe
 import cats.syntax.traverse._
@@ -51,3 +73,17 @@ def getName(key: Int): Maybe[String] = {
   }
 }
 
+
+// More use of Traverse methods from the workshop:
+
+List(Just("catty"), NotThere, Just("Maybe")).sequence
+listOfMaybe.sequence
+
+val listOfFunctions = List((x: Int) => x + x, (y: Int) => s"$y")
+val listOfInt = List(1,2,3)
+val result = Applicative[List].ap(listOfFunctions)(listOfInt)
+
+for {
+  fn <- listOfFunctions
+  value <- listOfInt
+} yield fn(value)

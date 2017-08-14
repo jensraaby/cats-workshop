@@ -10,7 +10,7 @@ import cats.workshop3.MaybeInstances._
 // try out some of the syntax here:
 import cats.syntax.applicative._
 
-val maybeDoubleIt = ((number: Int) => number*2).pure[Maybe]
+val maybeDoubleIt = ((number: Int) => number * 2).pure[Maybe]
 val maybeInt = 123.pure[Maybe]
 
 maybeApplicative.ap(maybeDoubleIt)(maybeInt)
